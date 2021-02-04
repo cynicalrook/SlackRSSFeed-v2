@@ -40,7 +40,7 @@ def post_to_slack(slack_client, newposts):
     listsize = len(newposts)
     while i < listsize:
 #        slack_client.api_call("chat.postMessage", channel=slack_channel, text=newposts[i], as_user = True)   old api call
-        slack_client.chat_postMessage(channel=slack_channel, text=newposts[i])
+        slack_client.chat_postMessage(channel=slack_channel, text=newposts[i], as_user=True)
         i = i + 1
 
 def getfeed(urlstring, last_update_obj):

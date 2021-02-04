@@ -1,5 +1,4 @@
 import sys
-#sys.path.append('/Users/steve/Documents/python-virtual-environments/slackrssfeed/Lib/site-packages')
 import feedparser
 import requests
 import os
@@ -11,24 +10,18 @@ from datetime import datetime
 from datetime import timezone
 from pathlib import Path
 from shutil import copy2
-from slackclient import SlackClient
+#from slackclient import SlackClient    old api
+from slack_sdk import WebClient
 from tinydb import TinyDB, Query
 
-#url = 'http://feeds.arstechnica.com/arstechnica/index'
-
 feed_db = TinyDB('rsslist.json')
-slack_channel = "CEKB88A1Y"
+slack_channel = "GDQ7JPD8U"
 
 def get_keywords():
     with open('keywords.json') as keyword_file:
         data1 = json.load(keyword_file)
     s = set(data1)
     return s
-
-#def get_lastupdate():
-#    with open('lastupdate.json') as lastupdate_file:
-#        data1 = json.load(lastupdate_file)['date']
-#    return data1
 
 def post_lastUpdate(url, lastupdate):
     try:
@@ -38,10 +31,6 @@ def post_lastUpdate(url, lastupdate):
             date_formatted = lastupdate
         else:
             date_formatted = lastupdate[:-3] + '+0000'
-#    try:
-#        date_formatted = datetime.strftime(lastupdate, '%a, %d %b %Y %H:%M:%S %z')
-#    except TypeError:
-#        date_formatted = lastupdate[:-3] + '+0000'
     feed_search = Query()
     feed_db.update({'lastupdate': date_formatted}, feed_search.url == url)
 
@@ -50,7 +39,8 @@ def post_to_slack(slack_client, newposts):
     newposts.reverse()
     listsize = len(newposts)
     while i < listsize:
-        slack_client.api_call("chat.postMessage", channel=slack_channel, text=newposts[i], as_user = True)
+#        slack_client.api_call("chat.postMessage", channel=slack_channel, text=newposts[i], as_user = True)   old api call
+        slack_client.chat_postMessage(channel=slack_channel, text=newposts[i])
         i = i + 1
 
 def getfeed(urlstring, last_update_obj):
@@ -84,9 +74,7 @@ def getfeed(urlstring, last_update_obj):
         return newposts_list, d.entries[0].published
 
 def load_config(config_file, config_section):
-#    dir_path = os.path.dirname(os.path.relpath('config.ini'))
     dir_path = os.path.dirname(os.path.realpath(__file__))
-#    dir_path = os.path.abspath('.')
     if os.path.isfile(dir_path + '/' + config_file):
         config = configparser.ConfigParser()
         config.read(config_file)
@@ -114,7 +102,7 @@ def main():
     config_file = 'config.ini'
     config_section = 'dev'
     slack_token = load_config(config_file, config_section)
-    slack_client = SlackClient(slack_token)
+    slack_client = WebClient(slack_token)
     feed_count = len(feed_db)
     feed_counter = feed_count
     while feed_counter > 0:

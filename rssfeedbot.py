@@ -1,5 +1,3 @@
-#import sys
-#sys.path.append('/Users/steve/Documents/python-virtual-environments/slackrssfeed/Lib/site-packages')
 import os
 import json
 import time

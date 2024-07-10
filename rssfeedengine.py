@@ -1,14 +1,14 @@
-import sys
+#import sys
 import feedparser
-import requests
+#import requests
 import os
-import inspect
+#import inspect
 import configparser
 import json
 import re
 from datetime import datetime
 from datetime import timezone
-from pathlib import Path
+#from pathlib import Path
 from shutil import copy2
 #from slackclient import SlackClient    old api
 from slack_sdk import WebClient
@@ -16,6 +16,9 @@ from tinydb import TinyDB, Query
 
 feed_db = TinyDB('rsslist.json')
 slack_channel = "GDQ7JPD8U"
+
+#  Test Channel
+#slack_channel = 'CFC9GQ2V6'
 
 def get_keywords():
     with open('keywords.json') as keyword_file:
